@@ -1,0 +1,16 @@
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Block all access to the data directory
+RewriteRule ^data(/|$) - [F,L]
+
+# Block direct access to any .json file
+<FilesMatch "\.json$">
+    Require all denied
+</FilesMatch>

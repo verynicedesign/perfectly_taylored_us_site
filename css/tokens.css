@@ -1,0 +1,25 @@
+:root {
+  --pine: #0F271F;
+  --pine-deep: #08130D;
+  --olivine: #A09C33;
+  --paprika: #D05D30;
+  --bronze: #D09D38;
+  --mahogany: #3D0000;
+  --stone: #E8E4DC;
+  --porcelain: #FFFFFB;
+  --pitch: #090001;
+
+  --display: 'Gloock', serif;
+  --serif: 'Instrument Serif', serif;
+  --body: 'Inter', sans-serif;
+
+  --page-x: clamp(20px, 6vw, 80px);
+  --section-y: clamp(96px, 16vw, 200px);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { font-family: var(--body); font-weight: 300; line-height: 1.5; }
+img { display: block; max-width: 100%; height: auto; }
+::selection { background: var(--olivine); color: var(--pine); }

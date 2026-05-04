@@ -1,0 +1,128 @@
+body {
+  background: var(--pine);
+  color: var(--porcelain);
+  min-height: 100svh;
+}
+
+.gate {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: var(--page-x);
+}
+
+.gate__wordmark {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--porcelain);
+  letter-spacing: -0.005em;
+  text-align: center;
+}
+
+.gate__wordmark em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--olivine);
+}
+
+.gate__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gate__form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gate__field {
+  display: flex;
+  flex-direction: column;
+}
+
+.gate__field + .gate__field {
+  margin-top: 24px;
+}
+
+.gate__label {
+  font-family: var(--body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--olivine);
+  margin-bottom: 8px;
+}
+
+.gate__input {
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--porcelain);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 251, 0.3);
+  border-radius: 0;
+  padding: 0 0 12px 0;
+  width: 100%;
+}
+
+.gate__input:focus {
+  outline: none;
+  border-bottom: 1px solid var(--olivine);
+}
+
+.gate__submit {
+  margin-top: 32px;
+  background: var(--paprika);
+  color: var(--porcelain);
+  font-family: var(--body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.gate__submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(9, 0, 1, 0.35);
+}
+
+.gate__submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.gate__error {
+  margin-top: 16px;
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--paprika);
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+}
+
+.gate__tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--porcelain);
+  opacity: 0.5;
+  text-align: center;
+  max-width: 320px;
+  margin: 0 auto;
+  line-height: 1.4;
+}
