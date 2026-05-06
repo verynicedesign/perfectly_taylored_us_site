@@ -2429,7 +2429,7 @@ body.pt-rsvp-locked { overflow: hidden; }
 <section class="rsvp" id="rsvp">
   <div class="section-inner" style="text-align: center;">
     <p class="section-label" style="justify-content: center;">RSVP</p>
-    <h2 class="rsvp-headline">Are you in?</h2>
+    <h2 class="rsvp-headline">are you in?</h2>
     <p class="rsvp-deck">Flora · San Diego<br>October 24, 2026</p>
 
     <div class="rsvp-variants">
@@ -2599,6 +2599,98 @@ body.pt-rsvp-locked { overflow: hidden; }
 </div>
 
 <script>
+/* ================================================================
+   SITE CONFIG — change values here, they propagate everywhere
+   ================================================================ */
+var CONFIG = {
+  weddingDate:      'October 24, 2026',
+  weddingDateShort: '10 · 24 · 26',
+  weddingDay:       'Saturday',
+  weddingMonth:     'October 2026',
+  venue:            'Flora',
+  venueCity:        'San Diego',
+  venueFull:        'Flora · San Diego',
+  venueAddress:     '1040 Seventh Avenue, San Diego, CA',
+  venueDistance:    '0.1 mi from Flora',
+
+  rsvpDeadline:     'September 14, 2026',
+  rsvpDeadlineShort:'September 14',
+  rsvpCutoff:       new Date('2026-09-15T00:00:00'),
+
+  registryUrl:      'https://withjoy.com/perfectlytayloredus/registry',
+  parkingMapUrl:    '../brand_assets/parking_map.pdf',
+  lookbookUrl:      'https://www.pinterest.com/yes_verynice/guest-lookbook/',
+
+  marriottUrl:      'https://www.marriott.com/event-reservations/reservation-link.mi?id=1776464804025&key=GRP&app=resvlink&_branch_match_id=1501299791059032501&_branch_referrer=H4sIAAAAAAAAA8soKSkottLXTywo0MtNLCrKzC8p0UvOz9UvSi3OyczLtgdK2ALZZSCOWmaKraG5uZmJmYmFgYmBkaladmqlrXtQgFpdUWpaKlB3Xnp8UlF%2BeXFqka1zRlF%2BbioAzmbwS2AAAAA%3D',
+  airbnb1Url:       'https://www.airbnb.com/rooms/1607494222968900174?adults=4&check_in=2026-10-21&check_out=2026-10-25&children=2&infants=0&pets=0&wishlist_item_id=11006229031688&source_impression_id=p3_1778016305_P3rmcxUtVHZ-ysOB&previous_page_section_name=1000',
+  airbnb2Url:       'https://www.airbnb.com/rooms/1505855055097809357?adults=4&check_in=2026-10-21&check_out=2026-10-25&children=2&infants=0&pets=0&wishlist_item_id=11005531438294&source_impression_id=p3_1778016305_P3s62_hgCML5LPIO&previous_page_section_name=1000',
+  airbnb3Url:       'https://www.airbnb.com/rooms/1388040912641244927?adults=4&check_in=2026-10-21&check_out=2026-10-25&children=2&infants=0&pets=0&wishlist_item_id=11005531440155&source_impression_id=p3_1778016357_P3-mvNc0q4UtijbE&previous_page_section_name=1000',
+  airbnbWishlistUrl:'https://www.airbnb.com/wishlists/1867822106',
+};
+
+/* Wire CONFIG values into the DOM on load */
+(function() {
+  /* menu footer */
+  var menuDateEl = document.querySelector('.menu-meta span:first-child');
+  if (menuDateEl) menuDateEl.textContent = CONFIG.weddingDateShort;
+  var menuVenueEl = document.querySelector('.menu-meta span:last-child');
+  if (menuVenueEl) menuVenueEl.textContent = CONFIG.venue + ', ' + CONFIG.venueCity;
+
+  /* menu RSVP button */
+  var menuRsvpBtn = document.querySelector('.menu-rsvp-btn');
+  if (menuRsvpBtn) menuRsvpBtn.textContent = 'RSVP by ' + CONFIG.rsvpDeadlineShort + ' \u2192';
+
+  /* RSVP section deck */
+  var rsvpDeck = document.querySelector('.rsvp-deck');
+  if (rsvpDeck) rsvpDeck.innerHTML = CONFIG.venueFull + '<br>' + CONFIG.weddingDate;
+
+  /* RSVP CTA button */
+  var rsvpCtaSpan = document.querySelector('.pt-rsvp-cta span:first-child');
+  if (rsvpCtaSpan) rsvpCtaSpan.textContent = 'RSVP by ' + CONFIG.rsvpDeadlineShort;
+
+  /* Lodging links */
+  var marriottLink = document.querySelector('.lodging-link');
+  if (marriottLink) marriottLink.href = CONFIG.marriottUrl;
+
+  var abbLinks = document.querySelectorAll('.abb-view');
+  var abbUrls = [CONFIG.airbnb1Url, CONFIG.airbnb2Url, CONFIG.airbnb3Url];
+  abbLinks.forEach(function(link, i) { if (abbUrls[i]) link.href = abbUrls[i]; });
+
+  var abbSeeAll = document.querySelector('.abb-see-all');
+  if (abbSeeAll) abbSeeAll.href = CONFIG.airbnbWishlistUrl;
+
+  /* Registry FAQ link */
+  var registryLinks = document.querySelectorAll('a[href*="withjoy"][href*="registry"]');
+  registryLinks.forEach(function(l) { l.href = CONFIG.registryUrl; });
+
+  /* Parking map link */
+  var parkingLinks = document.querySelectorAll('a[href*="parking_map"]');
+  parkingLinks.forEach(function(l) { l.href = CONFIG.parkingMapUrl; });
+})();
+/* ---- RSVP CUTOFF ---- */
+(function() {
+  var CUTOFF = CONFIG.rsvpCutoff;
+  if (new Date() >= CUTOFF) {
+    /* swap section copy */
+    var headline = document.querySelector('.rsvp-headline');
+    if (headline) headline.textContent = 'rsvp is now closed.';
+
+    var deck = document.querySelector('.rsvp-deck');
+    if (deck) {
+      deck.innerHTML = "We\u2019re locked in and counting the days.<br>Can\u2019t wait to party it up with everyone who\u2019s coming.";
+    }
+
+    /* hide all RSVP buttons and variants */
+    document.querySelectorAll('[data-rsvp-open], .rsvp-variants, .menu-foot').forEach(function(el) {
+      el.style.display = 'none';
+    });
+
+    /* hide RSVP menu nav item */
+    var rsvpMenuItem = document.querySelector('.menu-item[href="#rsvp"]');
+    if (rsvpMenuItem) rsvpMenuItem.style.display = 'none';
+  }
+})();
+
 /* ---- FAQ ACCORDION ---- */
 document.querySelectorAll('.faq-q').forEach(function(q) {
   q.addEventListener('click', function() {
@@ -2913,6 +3005,7 @@ window.addEventListener('scroll', () => {
 
   var TOTAL_STEPS = 5;
   var step = 0;
+  var submitted = false;
   var data = { name: '', attending: null, diet: [], dietOther: '', note: '' };
 
   var DIET_OPTS = ['Vegetarian', 'Vegan', 'Gluten-free', 'Dairy-free', 'Nut allergy', 'Kosher', 'Halal'];
@@ -2940,7 +3033,7 @@ window.addEventListener('scroll', () => {
         '<p class="pt-rsvp-step__sub">A few quick questions and you\'ll be set. Takes about a minute.</p>' +
         '<div class="pt-rsvp-intro-frame">' +
           '<span class="pt-rsvp-step__label">The wedding</span>' +
-          '<div class="pt-rsvp-intro-frame__date">October 24, 2026</div>' +
+          '<div class="pt-rsvp-intro-frame__date">' + CONFIG.weddingDate + '</div>' +
         '</div>' +
       '</div>';
     } else if (step === 1) {
@@ -3041,6 +3134,7 @@ window.addEventListener('scroll', () => {
       }
     } else {
       html += '<button type="button" class="pt-rsvp-done" id="ptRsvpDoneBtn">Close</button>';
+      html += '<button type="button" class="pt-rsvp-back" id="ptRsvpEditBtn">Edit my reply</button>';
     }
 
     footer.innerHTML = html;
@@ -3051,6 +3145,12 @@ window.addEventListener('scroll', () => {
     if (backBtn) backBtn.addEventListener('click', back);
     var doneBtn = document.getElementById('ptRsvpDoneBtn');
     if (doneBtn) doneBtn.addEventListener('click', closeModal);
+    var editBtn = document.getElementById('ptRsvpEditBtn');
+    if (editBtn) editBtn.addEventListener('click', function() {
+      submitted = false;
+      step = 1;
+      renderStep();
+    });
   }
 
   function updateChrome() {
@@ -3113,8 +3213,12 @@ window.addEventListener('scroll', () => {
   }
 
   function openModal() {
-    step = 0;
-    data = { name: '', attending: null, diet: [], dietOther: '', note: '' };
+    if (!submitted) {
+      step = 0;
+      data = { name: '', attending: null, diet: [], dietOther: '', note: '' };
+    } else {
+      step = 5;
+    }
     modal.hidden = false;
     document.body.classList.add('pt-rsvp-locked');
     renderStep();
@@ -3126,6 +3230,7 @@ window.addEventListener('scroll', () => {
   }
 
   function onSubmit(payload) {
+    submitted = true;
     fetch('/api/rsvp.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
