@@ -1,0 +1,2471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfectly Taylored — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400&family=Gloock&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pine:       #0F271F;
+  --pine-deep:  #08130D;
+  --pitch:      #090001;
+  --olivine:    #A09C33;
+  --paprika:    #D05D30;
+  --stone:      #E8E4DC;
+  --porcelain:  #FFFFFB;
+  --display:    'Gloock', Georgia, serif;
+  --serif:      'Fraunces', Georgia, serif;
+  --body:       'Inter', system-ui, sans-serif;
+  --page-x:     clamp(1.25rem, 6vw, 5rem);
+  --section-y:  clamp(5rem, 10vw, 8rem);
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  font-weight: 300;
+  line-height: 1.5;
+  background: var(--pine);
+  color: var(--porcelain);
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+
+.nav-lockup {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+/* ---- MASTHEAD ---- */
+.mast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.125rem var(--page-x);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.mast.scrolled {
+  background: rgba(8, 19, 13, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.mast-logo {
+  font-family: var(--display);
+  font-size: 1rem;
+  letter-spacing: -0.005em;
+  color: var(--porcelain);
+}
+
+.mast-logo em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+  color: var(--olivine);
+}
+
+.mast-nav { display: flex; align-items: center; gap: 1rem; }
+
+.mast-menu {
+  background: none;
+  border: none;
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--porcelain);
+  cursor: pointer;
+  padding: 0;
+}
+
+.mast-rsvp {
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--porcelain);
+  background: var(--pine);
+  padding: 0.625rem 1.125rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,251,0.2);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.mast-rsvp:hover { background: var(--olivine); border-color: var(--olivine); }
+
+/* ---- MENU OVERLAY ---- */
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--pine);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease-out), visibility 0.4s;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--page-x);
+  overflow-y: auto;
+}
+
+.menu.open { opacity: 1; visibility: visible; }
+
+.menu-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,251,0.1);
+  padding: 1.125rem 0;
+}
+
+.menu-close {
+  background: none;
+  border: none;
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--porcelain);
+  cursor: pointer;
+  padding: 0;
+}
+
+.menu-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 0;
+  max-width: 500px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.menu-list { border-top: 1px solid rgba(255,255,251,0.1); }
+
+.menu-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  align-items: baseline;
+  border-bottom: 1px solid rgba(255,255,251,0.1);
+  padding: 1.125rem 0;
+  cursor: pointer;
+  transition: padding-left 0.3s ease;
+}
+
+.menu-item:hover { padding-left: 0.75rem; }
+
+.menu-num { display: none; }
+
+.menu-name {
+  font-family: var(--display);
+  font-size: clamp(1.25rem, 2.5vw, 2rem);
+  color: var(--porcelain);
+  letter-spacing: -0.02em;
+}
+
+.menu-teaser {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.8125rem;
+  color: var(--stone);
+  opacity: 0.5;
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+}
+
+/* ---- HERO ---- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--pine);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.hero-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #1c3d2c 0%, #0d2018 45%, #091610 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,251,0.15);
+  font-family: var(--body);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(8,19,13,0.15) 0%,
+    transparent 30%,
+    transparent 48%,
+    rgba(8,19,13,0.5) 72%,
+    rgba(8,19,13,0.92) 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding-inline: var(--page-x);
+}
+
+.hero-name-wrap {
+  line-height: 1;
+}
+
+.hero-name {
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.045em;
+  text-transform: lowercase;
+  white-space: nowrap;
+  color: var(--porcelain);
+  display: flex;
+  align-items: baseline;
+  opacity: 0.7;
+}
+
+.hero-word {
+  display: inline-block;
+  overflow: visible;
+  vertical-align: top;
+  padding-top: 0.18em;
+  padding-bottom: 64px;
+}
+
+.hero-word-inner {
+  display: inline-block;
+}
+
+.hero-letter { display: inline-block; }
+
+.hero-amp {
+  display: inline-block;
+  vertical-align: top;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  color: var(--olivine);
+  padding: 0 0.06em;
+  line-height: 0.85;
+}
+
+.hero-meta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: var(--page-x);
+  padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  opacity: 0;
+  transition: opacity 0.8s ease 1.3s;
+}
+
+.hero-meta.visible { opacity: 1; }
+
+.hero-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+}
+
+.hero-rule {
+  display: inline-block;
+  width: 2.5rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+  flex-shrink: 0;
+}
+
+.hero-meta-right {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+  line-height: 1.4;
+}
+
+.hero-meta-right .olivine { color: var(--olivine); }
+
+/* ---- SECTION SHARED ---- */
+.section-inner {
+  max-width: 850px;
+  margin-inline: auto;
+  padding: var(--section-y) var(--page-x);
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: var(--olivine);
+  margin-bottom: 2rem;
+}
+
+.label-rule {
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.section-headline {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 6vw, 5.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+
+.section-deck {
+  font-family: var(--body);
+  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+  line-height: 1.65;
+  font-weight: 300;
+  max-width: 34rem;
+  margin-top: 1.5rem;
+  opacity: 0.8;
+}
+
+/* ---- PLACEHOLDER ---- */
+.ph {
+  margin-top: 3rem;
+  border: 1px dashed currentColor;
+  border-radius: 4px;
+  padding: 3rem;
+  text-align: center;
+  opacity: 0.18;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ---- DAY SECTION ---- */
+.day-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: -7px;
+}
+
+.day-date-num {
+  font-family: var(--display);
+  font-size: clamp(6rem, 32vw, 9rem);
+  line-height: 0.85;
+  letter-spacing: -0.045em;
+  color: var(--olivine);
+}
+
+.day-date-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 10px;
+}
+
+.day-saturday {
+  font-family: var(--display);
+  font-size: 3rem;
+  line-height: 1.05;
+  color: var(--porcelain);
+}
+
+.day-month {
+  font-family: var(--body);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--olivine);
+}
+
+.day-photo-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.day-photo {
+  width: 100%;
+  height: 218px;
+  object-fit: cover;
+  display: block;
+}
+
+.day-fig {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  color: #5c7569;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  padding-bottom: 16px;
+}
+
+.day-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.day-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.day-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.day-event {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--olivine);
+  line-height: 1;
+}
+
+.day-time {
+  font-family: var(--body);
+  font-weight: 300;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--porcelain);
+}
+
+.day-time em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: inherit;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  letter-spacing: 0.04em;
+}
+
+.day-divider {
+  width: 100%;
+  height: 0.5px;
+  background: #5c7569;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.day-spread {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-left,
+.day-right {
+  width: 100%;
+}
+
+.day-footer {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  color: #5c7569;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 767px) {
+  .section-headline { margin-top: 16px; }
+}
+
+@media (min-width: 768px) {
+  .lookbook .section-inner { max-width: 1200px; }
+  .lookbook .lb-cell--desktop { display: flex; }
+  .lookbook .lb-num { display: block; }
+  .lookbook .lb-row { height: 400px; }
+}
+
+@media (min-width: 768px) {
+  .day .section-inner {
+    max-width: 1200px;
+  }
+
+  .day-spread {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 80px;
+  }
+
+  .day-left,
+  .day-right {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .day-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .day-photo-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .day-photo {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .day-right {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: 175px;
+  }
+
+  .day-schedule {
+    margin-top: 0;
+    gap: 32px;
+  }
+
+  .day-divider {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .day-photo {
+    height: auto;
+  }
+}
+
+/* ---- LOOKBOOK SECTION ---- */
+.lb-swatches {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  height: 24px;
+  margin-top: 8px;
+}
+
+.lb-swatch {
+  flex: 1;
+  min-width: 0;
+}
+
+.lb-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.lb-row {
+  display: flex;
+  gap: 4px;
+  height: 200px;
+  width: 100%;
+}
+
+.lb-cell {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.lb-cell img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lb-num {
+  position: relative;
+  z-index: 1;
+  font-family: var(--display);
+  font-size: 9px;
+  color: var(--olivine);
+  padding: 4px;
+  display: none;
+}
+
+.lb-cell--desktop { display: none; }
+
+.lb-link {
+  display: inline-block;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pine);
+  border-bottom: 0.5px solid var(--olivine);
+  padding-bottom: 4px;
+  text-decoration: none;
+  margin-top: 24px;
+}
+
+.lb-link:hover { color: var(--olivine); }
+
+.lb-embed {
+  margin-top: 24px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.lb-note {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  color: #676755;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  margin-top: 16px;
+}
+
+/* ---- WEEKEND SECTION ---- */
+.weekend-cards { margin-top: 48px; }
+
+.wk-card {
+  position: sticky;
+  top: 90px;
+  background: var(--porcelain);
+  border-radius: 2px;
+  padding: clamp(32px, 5vw, 56px);
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  color: var(--pine);
+  box-shadow: 0 -8px 24px rgba(15, 39, 31, 0.08);
+  border: 1px solid rgba(15, 39, 31, 0.08);
+}
+
+@media (min-width: 768px) {
+  .wk-card { grid-template-columns: 1fr 1fr; gap: 48px; top: 120px; }
+}
+
+.weekend .section-inner { max-width: 1200px; }
+
+.wk-card-day {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: clamp(28px, 3.5vw, 36px);
+  line-height: 1;
+  color: var(--olivine);
+  letter-spacing: -0.02em;
+}
+
+.wk-card-date {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pine);
+  opacity: 0.5;
+  margin-top: 4px;
+}
+
+.wk-card-title {
+  font-family: var(--display);
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1;
+  color: #090001;
+  letter-spacing: -0.025em;
+  margin: 8px 0 12px;
+}
+
+.wk-card-title em {
+  font-family: var(--display);
+  font-style: normal;
+  color: #090001;
+}
+
+.wk-card-deck {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--pine);
+  opacity: 0.7;
+  font-weight: 300;
+}
+
+.wk-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid rgba(15, 39, 31, 0.15);
+  padding-top: 24px;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .wk-card-details {
+    border-top: none;
+    border-left: 1px solid rgba(15, 39, 31, 0.15);
+    padding-top: 0;
+    padding-left: 32px;
+  }
+}
+
+.wk-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wk-detail dt {
+  font-family: var(--body);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--olivine);
+  font-weight: 500;
+}
+
+.wk-detail dd {
+  font-family: var(--serif);
+  font-style: italic;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 16px;
+  color: var(--pine);
+  line-height: 1.3;
+}
+
+/* ---- LODGING SECTION ---- */
+.lodging .section-inner { max-width: 1200px; }
+
+.lodging-deck {
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #676755;
+  margin-top: 8px;
+}
+
+.lodging-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+  margin-top: 48px;
+}
+
+.lodging-kicker {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 1.1rem;
+  color: var(--olivine);
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.lodging-col-headline {
+  font-family: var(--display);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: #090001;
+  margin-bottom: 12px;
+}
+
+.lodging-col-body {
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #676755;
+  margin-bottom: 16px;
+}
+
+.hotel-card {
+  border: 0.5px solid #c8c8a5;
+  background: var(--porcelain);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 4px;
+}
+
+.hotel-card-kicker {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 1.1rem;
+  color: var(--olivine);
+  letter-spacing: 0.04em;
+}
+
+.hotel-card-name {
+  font-family: var(--body);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #090001;
+  margin-top: 6px;
+}
+
+.hotel-card-meta {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #676755;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.hotel-card-deadline {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #090001;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.lodging-link {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #090001;
+  border-bottom: 0.5px solid var(--olivine);
+  padding-bottom: 4px;
+  text-decoration: none;
+}
+
+.lodging-link:hover { color: var(--olivine); }
+
+.abb-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.abb-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 0.5px solid #c8c8a5;
+}
+
+.abb-row:last-child { border-bottom: 0.5px solid #c8c8a5; }
+
+.abb-row-left { flex: 1; min-width: 0; }
+
+.abb-row-name {
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #090001;
+  line-height: 1.4;
+}
+
+.abb-row-meta {
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 300;
+  color: #676755;
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+.abb-view {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--olivine);
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.abb-see-all {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #090001;
+  border-bottom: 0.5px solid var(--olivine);
+  padding-bottom: 4px;
+  text-decoration: none;
+  margin-top: 32px;
+}
+
+.abb-see-all:hover { color: var(--olivine); }
+
+@media (min-width: 768px) {
+  .lodging-columns { flex-direction: row; gap: 64px; }
+  .lodging-columns > div { flex: 1; min-width: 0; }
+  .lodging-deck { font-size: 1rem; }
+  .lodging-col-body { font-size: 1rem; }
+  .abb-row-meta { font-size: 1rem; }
+}
+
+/* ---- FAQ SECTION ---- */
+.faq-sec .section-inner { max-width: 1200px; }
+
+.faq-list {
+  border-top: 1px solid rgba(15, 39, 31, 0.18);
+  margin-top: 48px;
+}
+
+.faq-item { border-bottom: 1px solid rgba(15, 39, 31, 0.18); }
+
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 28px 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.1em;
+  color: var(--pine);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  transition: color 0.3s ease;
+}
+
+.faq-q:hover { color: var(--olivine); }
+
+.faq-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 300;
+  transition: transform 0.4s ease;
+}
+
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+.faq-item.open .faq-a { max-height: 400px; }
+
+.faq-a-inner {
+  padding: 0 0 28px;
+  font-family: var(--body);
+  font-size: 0.95em;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--pine);
+  opacity: 0.78;
+  max-width: 640px;
+}
+
+.faq-col { display: contents; }
+
+.faq-show-more {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .faq-col:last-child { display: none; }
+  .faq-col:last-child.expanded { display: contents; }
+  .faq-col:last-child.expanded .faq-item:first-child {
+    border-top: 1px solid rgba(15, 39, 31, 0.18);
+  }
+  .faq-show-more {
+    display: inline-block;
+    font-family: var(--body);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #090001;
+    border-bottom: 0.5px solid var(--olivine);
+    padding-bottom: 4px;
+    text-decoration: none;
+    margin-top: 32px;
+    cursor: pointer;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .faq-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 64px;
+    border-top: none;
+    align-items: start;
+  }
+  .faq-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .faq-col .faq-item:first-child {
+    border-top: 1px solid rgba(15, 39, 31, 0.18);
+  }
+}
+
+/* ---- STORY SECTION ---- */
+.story .section-inner { max-width: 1200px; }
+
+.story-spread {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.story-drop-row {
+  display: block;
+}
+
+.story-drop {
+  font-family: var(--display);
+  font-size: clamp(64px, 10vw, 96px);
+  line-height: 0.85;
+  color: var(--porcelain);
+  float: left;
+  margin-right: 8px;
+  margin-bottom: 4px;
+}
+
+.story-body {
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--stone);
+  text-align: justify;
+}
+
+.story-body p { margin-top: 16px; }
+.story-body p:first-of-type { margin-top: 16px; }
+
+.story-extra {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1.1s ease;
+}
+
+.story-extra.open { max-height: 1200px; }
+
+.story-read-more {
+  display: inline-block;
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--olivine);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.story-photo {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .story-spread {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 64px;
+  }
+  .story-left {
+    flex: 1;
+    min-width: 0;
+  }
+  .story-right {
+    flex: 1;
+    min-width: 0;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;
+  }
+  .story-body { font-size: 1.125rem; }
+}
+
+/* ---- SECTION BACKGROUNDS ---- */
+.note     { background: var(--stone);      color: var(--pine); }
+.day      { background: var(--pine);       color: var(--porcelain); }
+.lookbook { background: var(--stone);      color: var(--pine); }
+.weekend  { background: var(--olivine);    color: #090001; }
+.lodging  { background: var(--stone);      color: var(--pine); }
+.faq-sec  { background: var(--stone);      color: var(--pine); }
+.rsvp     { background: var(--paprika);    color: var(--porcelain); }
+.dialogue { background: var(--pine);       color: var(--porcelain); }
+.story    { background: var(--pine);       color: var(--stone); }
+.closer   { background: var(--pine);       color: var(--porcelain); }
+
+.note .section-label,
+.lookbook .section-label,
+.lodging .section-label,
+.faq-sec .section-label { color: var(--olivine); }
+
+.weekend .section-label { color: #090001; }
+
+.note .ph,
+.lookbook .ph,
+.weekend .ph,
+.lodging .ph,
+.faq-sec .ph { color: var(--pine); }
+
+.rsvp .section-label { color: var(--porcelain); opacity: 0.7; }
+
+/* ---- CLOSER ---- */
+.closer-quote {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(3rem, 10vw, 9rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  max-width: 18ch;
+}
+
+.closer-attr {
+  margin-top: 2rem;
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+
+/* ---- FOOTER ---- */
+.foot {
+  background: var(--pine-deep);
+  border-top: 1px solid rgba(255,255,251,0.07);
+}
+
+.foot-inner {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 5rem var(--page-x) 2.5rem;
+  text-align: center;
+}
+
+.foot-wordmark {
+  font-family: var(--display);
+  font-size: clamp(3.5rem, 12vw, 10rem);
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: var(--porcelain);
+  margin-bottom: 2rem;
+}
+
+.foot-wordmark em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--olivine);
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+}
+
+.foot-meta {
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--stone);
+  opacity: 0.4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.foot-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--olivine);
+}
+
+/* ---- NOTE BODY ---- */
+.note-body {
+  max-width: 38rem;
+  font-family: var(--body);
+  font-size: clamp(1rem, 1.6vw, 1.1875rem);
+  line-height: 1.7;
+  font-weight: 300;
+  color: var(--pine);
+  margin-top: 1.5rem;
+}
+
+.note-body p + p { margin-top: 1.25rem; }
+
+.note-signoff {
+  margin-top: 2.5rem;
+  font-family: var(--display);
+  font-size: 3rem;
+  letter-spacing: -0.02em;
+  color: var(--pine);
+}
+
+.note-signoff em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--olivine);
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+}
+
+/* ---- RSVP SECTION ---- */
+.rsvp-headline {
+  font-family: var(--display);
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  margin-bottom: 2rem;
+}
+
+.rsvp-deck {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+  max-width: 32rem;
+  margin: 0 auto 3rem;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.rsvp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.75rem 1.25rem 2.25rem;
+  background: var(--porcelain);
+  color: var(--paprika);
+  border-radius: 999px;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.rsvp-btn:hover { transform: translateY(-3px); }
+
+.rsvp-arrow {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--paprika);
+  color: var(--porcelain);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+/* VARIANT A — pill without circle, plain paprika arrow */
+.rsvp-btn-a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 2rem;
+  background: var(--porcelain);
+  color: var(--paprika);
+  border-radius: 999px;
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  text-decoration: none;
+  transition: gap 0.3s ease, transform 0.3s ease;
+}
+
+.rsvp-btn-a:hover { gap: 1.25rem; transform: translateY(-2px); }
+
+.rsvp-arrow-a {
+  color: var(--paprika);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* VARIANT B — large Gloock link, no enclosure */
+.rsvp-link-b {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5em;
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--porcelain);
+  text-decoration: none;
+  border-bottom: 1.5px solid rgba(255,255,251,0.35);
+  padding-bottom: 0.1em;
+  transition: border-color 0.3s ease, color 0.3s ease;
+  line-height: 1;
+}
+
+.rsvp-link-b:hover {
+  color: var(--porcelain);
+  border-color: var(--porcelain);
+}
+
+.rsvp-link-b-arrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-variation-settings: "SOFT" 0, "WONK" 1;
+  font-size: 0.7em;
+  color: var(--olivine);
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.rsvp-link-b:hover .rsvp-link-b-arrow { transform: translateX(6px); }
+
+.rsvp-variants {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.rsvp-variant-label {
+  font-family: var(--body);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  opacity: 0.4;
+  margin-bottom: 0.5rem;
+}
+
+/* VARIANT C — Gloock link with white arrow */
+.rsvp-link-c {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--porcelain);
+  text-decoration: none;
+  border-bottom: 1.5px solid rgba(255,255,251,0.35);
+  padding-bottom: 0.1em;
+  transition: border-color 0.3s ease;
+  line-height: 1;
+}
+
+.rsvp-link-c:hover { border-color: var(--porcelain); }
+
+.rsvp-link-c-arrow {
+  font-family: var(--body);
+  font-size: 0.55em;
+  font-weight: 600;
+  color: var(--porcelain);
+  transition: transform 0.3s ease;
+  display: inline-block;
+  letter-spacing: 0;
+}
+
+.rsvp-link-c:hover .rsvp-link-c-arrow { transform: translateX(6px); }
+.dialogue-stack {
+  max-width: 52rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.d-line {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.5rem, 3.5vw, 3.25rem);
+  line-height: 1.15;
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+}
+
+.d-line.speaker-a { text-align: left; color: var(--porcelain); }
+.d-line.speaker-b { text-align: right; color: var(--olivine); }
+
+.d-attr {
+  margin-top: 4rem;
+  text-align: center;
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  color: var(--olivine);
+  opacity: 0.6;
+}
+
+/* ---- PROTOTYPE LABEL ---- */
+.proto-badge {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--olivine);
+  color: var(--pine);
+  font-family: var(--body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.875rem;
+  border-radius: 999px;
+  z-index: 999;
+}
+@media (max-width: 767px) {
+  .hero-name {
+    display: block;
+    white-space: normal;
+    font-size: 35vw;
+    position: relative;
+    padding-bottom: 32px;
+  }
+  .hero-word {
+    display: block;
+    width: 100%;
+    overflow: visible;
+    padding-bottom: 0;
+    padding-top: 0;
+  }
+  .hero-word-inner {
+    font-size: 1em;
+  }
+  #heroAmp {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 40vw;
+    padding: 0;
+    padding-right: 12px;
+    margin: 0;
+    z-index: 2;
+  }
+  .hero-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .hero-meta-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .hero-meta-right {
+    text-align: left;
+  }
+  .hero-rule { display: none; }
+  .nav-lockup { width: 100px; }
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="mast" id="mast">
+  <a href="#"><img src="../brand_assets/lockup.png" alt="Perfectly Taylored" class="nav-lockup"></a>
+  <nav class="mast-nav">
+    <button class="mast-menu" id="menuOpen">Menu</button>
+    <a class="mast-rsvp" href="https://withjoy.com/perfectlytayloredus" target="_blank" rel="noopener">RSVP</a>
+  </nav>
+</header>
+
+<!-- MENU -->
+<div class="menu" id="menu" role="dialog" aria-modal="true">
+  <div class="menu-top">
+    <img src="../brand_assets/lockup.png" alt="Perfectly Taylored" class="nav-lockup">
+    <button class="menu-close" id="menuClose">Close &times;</button>
+  </div>
+  <div class="menu-body">
+    <nav class="menu-list">
+      <a href="#note" class="menu-item js-link">
+        <span class="menu-num">I</span>
+        <span class="menu-name">A short message</span>
+        <span class="menu-teaser">a note from us</span>
+      </a>
+      <a href="#day" class="menu-item js-link">
+        <span class="menu-num">II</span>
+        <span class="menu-name">The wedding, at last</span>
+        <span class="menu-teaser">10·24·26 · Flora</span>
+      </a>
+      <a href="#lookbook" class="menu-item js-link">
+        <span class="menu-num">III</span>
+        <span class="menu-name">The mood, frame by frame</span>
+        <span class="menu-teaser">what to wear</span>
+      </a>
+      <a href="#weekend" class="menu-item js-link">
+        <span class="menu-num">IV</span>
+        <span class="menu-name">More than a day</span>
+        <span class="menu-teaser">welcome to farewell</span>
+      </a>
+      <a href="#lodging" class="menu-item js-link">
+        <span class="menu-num">V</span>
+        <span class="menu-name">A bed, nearby</span>
+        <span class="menu-teaser">hotels and airbnbs</span>
+      </a>
+      <a href="#faq" class="menu-item js-link">
+        <span class="menu-num">VI</span>
+        <span class="menu-name">Everything you need to know</span>
+        <span class="menu-teaser">FAQ</span>
+      </a>
+      <a href="https://withjoy.com/perfectlytayloredus" target="_blank" rel="noopener" class="menu-item js-link">
+        <span class="menu-num">VII</span>
+        <span class="menu-name">Send your RSVP</span>
+        <span class="menu-teaser">by September 14</span>
+      </a>
+      <a href="#story" class="menu-item js-link">
+        <span class="menu-num">VIII</span>
+        <span class="menu-name">A little story time</span>
+        <span class="menu-teaser">how it started</span>
+      </a>
+    </nav>
+  </div>
+</div>
+
+<main>
+
+<!-- 1. HERO -->
+<section class="hero" id="hero">
+  <div class="hero-photo">
+    <img src="../images/hero.jpg" alt="Joyce and Ryan" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-name-wrap" id="heroWrap">
+      <h1 class="hero-name" id="heroName">
+        <span class="hero-word" id="word1"><span class="hero-word-inner" id="wordInner1">joyce</span></span><span class="hero-amp" id="heroAmp">&amp;</span><span class="hero-word" id="word2"><span class="hero-word-inner" id="wordInner2">ryan</span></span>
+      </h1>
+    </div>
+  </div>
+
+  <div class="hero-meta" id="heroMeta">
+    <div class="hero-meta-left">
+      <span>San Diego, CA</span>
+      <span class="hero-rule"></span>
+      <span>Saturday, October 24, 2026</span>
+    </div>
+    <div class="hero-meta-right">
+      It's only forever, <span class="olivine">not long at all.</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2. NOTE -->
+<section class="note" id="note">
+  <div class="section-inner">
+    <p class="section-label"><span class="label-rule"></span>A note from us</p>
+    <h2 class="section-headline">A short message,<br>before the day.</h2>
+    <div class="note-body">
+      <p>We've spent a lot of time thinking about what this weekend would feel like, and the part we keep coming back to is everyone we love being in one place at the same time. That doesn't happen often, and it matters to us more than we'll probably be able to say in the moment.</p>
+      <p>Thank you for the trip, the time off, and whatever it took to get you here. We're genuinely grateful for all of it, and we can't wait to spend this weekend with you.</p>
+    </div>
+    <p class="note-signoff">j<em>&amp;</em>r</p>
+  </div>
+</section>
+
+<!-- 3. DAY -->
+<section class="day" id="day">
+  <div class="section-inner">
+    <div class="day-spread">
+
+      <div class="day-left">
+        <p class="section-label"><span class="label-rule"></span>The wedding day</p>
+        <div class="day-top">
+          <div class="day-date-num">24</div>
+          <div class="day-date-col">
+            <p class="day-saturday">Saturday</p>
+            <p class="day-month">October 2026</p>
+          </div>
+        </div>
+        <div class="day-photo-wrap">
+          <img src="https://www.figma.com/api/mcp/asset/9c14050a-1145-4eeb-8341-0ba30d37650d" alt="Flora, the room" class="day-photo">
+        </div>
+      </div>
+
+      <div class="day-right">
+        <h2 class="section-headline">The wedding,<br>at last.</h2>
+        <div class="day-schedule">
+          <div class="day-row">
+            <div class="day-cell">
+              <p class="day-event">Cocktail Hour</p>
+              <p class="day-time">4:00 PM</p>
+            </div>
+            <div class="day-cell">
+              <p class="day-event">Standing Ceremony</p>
+              <p class="day-time">5:00 PM <em>Sharp</em></p>
+            </div>
+          </div>
+          <div class="day-row">
+            <div class="day-cell">
+              <p class="day-event">Dinner &amp; Dancing</p>
+              <p class="day-time">5:15 PM</p>
+            </div>
+            <div class="day-cell">
+              <p class="day-event">After Party</p>
+              <p class="day-time">11:00 PM <em>Our House</em></p>
+            </div>
+          </div>
+        </div>
+        <div class="day-divider"></div>
+        <p class="day-footer">cocktail attire · check out our lookbook</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 4. LOOKBOOK -->
+<section class="lookbook" id="lookbook">
+  <div class="section-inner">
+    <p class="section-label"><span class="label-rule"></span>Lookbook</p>
+    <h2 class="section-headline">The mood.</h2>
+
+    <div class="lb-swatches">
+      <div class="lb-swatch" style="background:#d09d38;"></div>
+      <div class="lb-swatch" style="background:#d05d30;"></div>
+      <div class="lb-swatch" style="background:#611919;"></div>
+      <div class="lb-swatch" style="background:#a09c33;"></div>
+      <div class="lb-swatch" style="background:#2a473d;"></div>
+      <div class="lb-swatch" style="background:#13374f;"></div>
+    </div>
+
+    <div class="lb-grid">
+      <div class="lb-row">
+        <div class="lb-cell">
+          <img src="https://www.figma.com/api/mcp/asset/1b6f263c-1290-4a5e-834e-cb81f4d02c90" alt="">
+          
+        </div>
+        <div class="lb-cell">
+          <img src="https://www.figma.com/api/mcp/asset/853c49af-6053-475e-be24-a6f01cbb163b" alt="">
+          
+        </div>
+        <div class="lb-cell">
+          <img src="https://www.figma.com/api/mcp/asset/c5f45ecf-c292-4522-be4f-f1c98ad3a50e" alt="">
+          
+        </div>
+        <div class="lb-cell lb-cell--desktop">
+          <img src="https://www.figma.com/api/mcp/asset/7b68c4e9-e910-46a2-bea9-fe65236b7f26" alt="">
+          
+        </div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-cell">
+          <img src="https://www.figma.com/api/mcp/asset/b45453ef-6c86-444a-a374-a25d419de003" alt="">
+          
+        </div>
+        <div class="lb-cell">
+          <img src="https://www.figma.com/api/mcp/asset/4dc18f2e-7d9b-4156-8906-8094d151a518" alt="">
+          
+        </div>
+        <div class="lb-cell">
+          <img src="https://www.figma.com/api/mcp/asset/7c6c9f14-6e57-4c00-95fe-75ecfdade975" alt="">
+          
+        </div>
+        <div class="lb-cell lb-cell--desktop">
+          <img src="https://www.figma.com/api/mcp/asset/e1e0e98f-4a5e-4cd8-b943-9ad43ff46eaf" alt="">
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="lb-embed">
+      <a data-pin-do="embedBoard"
+         data-pin-board-width="400"
+         data-pin-scale-height="300"
+         data-pin-scale-width="100"
+         href="https://www.pinterest.com/yes_verynice/guest-lookbook/">
+      </a>
+    </div>
+
+    <a class="lb-link" href="https://www.pinterest.com/yes_verynice/guest-lookbook/" target="_blank" rel="noopener">
+      Open the full lookbook on Pinterest →
+    </a>
+
+    <p class="lb-note">steer clear of black if you can • absolutely no cream or white</p>
+  </div>
+</section>
+
+<!-- 5. WEEKEND -->
+<section class="weekend" id="weekend">
+  <div class="section-inner">
+    <p class="section-label"><span class="label-rule"></span>The weekend</p>
+    <h2 class="section-headline">More than a day.</h2>
+    <p class="section-deck">A long weekend, welcome to farewell. Pace yourself. Or don't.</p>
+
+    <div class="weekend-cards">
+
+      <div class="wk-card">
+        <div>
+          <div class="wk-card-day">Wednesday</div>
+          
+          <div class="wk-card-title">Welcome <em>soirée</em></div>
+          <div class="wk-card-deck">A soft landing for everyone in town early. Drinks, snacks, no agenda.</div>
+        </div>
+        <dl class="wk-card-details">
+          <div class="wk-detail"><dt>Date</dt><dd>Oct 21</dd></div>
+          <div class="wk-detail"><dt>Time</dt><dd>6:00 PM</dd></div>
+          <div class="wk-detail"><dt>Where</dt><dd>Our home</dd></div>
+          <div class="wk-detail"><dt>Wear</dt><dd>Whatever you packed</dd></div>
+        </dl>
+      </div>
+
+      <div class="wk-card">
+        <div>
+          <div class="wk-card-day">Thursday</div>
+          
+          <div class="wk-card-title">Day hang <em>+ karaoke</em></div>
+          <div class="wk-card-deck">Pool or beach by day, dinner, then a karaoke night for the brave and the loud.</div>
+        </div>
+        <dl class="wk-card-details">
+          <div class="wk-detail"><dt>Date</dt><dd>Oct 22</dd></div>
+          <div class="wk-detail"><dt>Time</dt><dd>All day</dd></div>
+          <div class="wk-detail"><dt>Where</dt><dd>TBD</dd></div>
+          <div class="wk-detail"><dt>Wear</dt><dd>Sunscreen, then sequins</dd></div>
+        </dl>
+      </div>
+
+      <div class="wk-card">
+        <div>
+          <div class="wk-card-day">Friday</div>
+          
+          <div class="wk-card-title">Explore <em>San Diego</em></div>
+          <div class="wk-card-deck">A free day before the main event. Beach, bookstores, tacos, your call.</div>
+        </div>
+        <dl class="wk-card-details">
+          <div class="wk-detail"><dt>Date</dt><dd>Oct 23</dd></div>
+          <div class="wk-detail"><dt>Time</dt><dd>All day</dd></div>
+          <div class="wk-detail"><dt>Where</dt><dd>Anywhere you want</dd></div>
+          <div class="wk-detail"><dt>Tip</dt><dd>Ask us, we'll send a list</dd></div>
+        </dl>
+      </div>
+
+      <div class="wk-card">
+        <div>
+          <div class="wk-card-day">Saturday</div>
+          
+          <div class="wk-card-title">The <em>wedding.</em></div>
+          <div class="wk-card-deck">The main event. Flora. Plants everywhere. Cocktails at four sharp.</div>
+        </div>
+        <dl class="wk-card-details">
+          <div class="wk-detail"><dt>Date</dt><dd>Oct 24</dd></div>
+          <div class="wk-detail"><dt>Time</dt><dd>4:00 PM</dd></div>
+          <div class="wk-detail"><dt>Where</dt><dd>Flora, San Diego</dd></div>
+          <div class="wk-detail"><dt>Wear</dt><dd>Cocktail · warm tones</dd></div>
+        </dl>
+      </div>
+
+      <div class="wk-card">
+        <div>
+          <div class="wk-card-day">Sunday</div>
+          
+          <div class="wk-card-title">Farewell <em>brunch</em></div>
+          <div class="wk-card-deck">Soft landing on the way out. Coffee, eggs, hugs, no rush.</div>
+        </div>
+        <dl class="wk-card-details">
+          <div class="wk-detail"><dt>Date</dt><dd>Oct 25</dd></div>
+          <div class="wk-detail"><dt>Time</dt><dd>11:00 AM</dd></div>
+          <div class="wk-detail"><dt>Where</dt><dd>Our home</dd></div>
+          <div class="wk-detail"><dt>Wear</dt><dd>Comfort, please</dd></div>
+        </dl>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 6. LODGING -->
+<section class="lodging" id="lodging">
+  <div class="section-inner">
+    <p class="section-label"><span class="label-rule"></span>Accommodations</p>
+    <h2 class="section-headline">A bed nearby.</h2>
+    <p class="lodging-deck">Two ways to do it: a hotel block we've reserved, or an Airbnb of your own.</p>
+
+    <div class="lodging-columns">
+
+      <div>
+        <p class="lodging-kicker">a hotel</p>
+        <h3 class="lodging-col-headline">Get a room</h3>
+        <p class="lodging-col-body">We have ten rooms blocked for our guests. This hotel is walking distance from the wedding venue in Downtown San Diego.</p>
+        <div class="hotel-card">
+          <div>
+            <p class="hotel-card-kicker">the hotel block</p>
+            <p class="hotel-card-name">Courtyard by Marriott</p>
+            <p class="hotel-card-meta">0.1 mi from Flora · 10 rooms held</p>
+            <p class="hotel-card-deadline">Book by September 23rd</p>
+          </div>
+          <a href="https://www.marriott.com/event-reservations/reservation-link.mi?id=1776464804025&key=GRP&app=resvlink&_branch_match_id=1501299791059032501&_branch_referrer=H4sIAAAAAAAAA8soKSkottLXTywo0MtNLCrKzC8p0UvOz9UvSi3OyczLtgdK2ALZZSCOWmaKraG5uZmJmYmFgYmBkaladmqlrXtQgFpdUWpaKlB3Xnp8UlF%2BeXFqka1zRlF%2BbioAzmbwS2AAAAA%3D" target="_blank" rel="noopener" class="lodging-link">Book your room →</a>
+        </div>
+      </div>
+
+      <div>
+        <p class="lodging-kicker">or, an Airbnb</p>
+        <h3 class="lodging-col-headline">Bring the group</h3>
+        <p class="lodging-col-body">For anyone planning to share a place, or wanting to stay close to where the after-party tends to land. A handful of our favorites in Serra Mesa, near our home.</p>
+        <div class="abb-list">
+          <div class="abb-row">
+            <div class="abb-row-left">
+              <p class="abb-row-name">3BD Gem: Pool, Garden &amp; Magical Sunsets</p>
+              <p class="abb-row-meta">Serra Mesa · 3 bedrooms</p>
+            </div>
+            <a href="https://www.airbnb.com/rooms/1607494222968900174?adults=4&check_in=2026-10-21&check_out=2026-10-25&children=2&infants=0&pets=0&wishlist_item_id=11006229031688&source_impression_id=p3_1778016305_P3rmcxUtVHZ-ysOB&previous_page_section_name=1000" target="_blank" rel="noopener" class="abb-view">View →</a>
+          </div>
+          <div class="abb-row">
+            <div class="abb-row-left">
+              <p class="abb-row-name">The Oasis by Coastline Vacation Rentals</p>
+              <p class="abb-row-meta">Serra Mesa · 4 bedrooms</p>
+            </div>
+            <a href="https://www.airbnb.com/rooms/1505855055097809357?adults=4&check_in=2026-10-21&check_out=2026-10-25&children=2&infants=0&pets=0&wishlist_item_id=11005531438294&source_impression_id=p3_1778016305_P3s62_hgCML5LPIO&previous_page_section_name=1000" target="_blank" rel="noopener" class="abb-view">View →</a>
+          </div>
+          <div class="abb-row">
+            <div class="abb-row-left">
+              <p class="abb-row-name">Modern Coastal Duo w Game Room &amp; Outdoor Dining</p>
+              <p class="abb-row-meta">Serra Mesa · 5 bedrooms</p>
+            </div>
+            <a href="https://www.airbnb.com/rooms/1388040912641244927?adults=4&check_in=2026-10-21&check_out=2026-10-25&children=2&infants=0&pets=0&wishlist_item_id=11005531440155&source_impression_id=p3_1778016357_P3-mvNc0q4UtijbE&previous_page_section_name=1000" target="_blank" rel="noopener" class="abb-view">View →</a>
+          </div>
+        </div>
+        <a href="https://www.airbnb.com/wishlists/1867822106" target="_blank" rel="noopener" class="abb-see-all">See all our Airbnb picks →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 9. DIALOGUE -->
+<section class="dialogue" id="dialogue">
+  <div class="section-inner">
+    <p class="section-label"><span class="label-rule"></span>Magic Dance</p>
+    <div class="dialogue-stack">
+      <p class="d-line speaker-a">"You remind me of the babe."</p>
+      <p class="d-line speaker-b">"What babe?"</p>
+      <p class="d-line speaker-a">"Babe with the power."</p>
+      <p class="d-line speaker-b">"What power?"</p>
+      <p class="d-line speaker-a">"Power of voodoo."</p>
+      <p class="d-line speaker-b">"Who do?"</p>
+      <p class="d-line speaker-a">"You do."</p>
+      <p class="d-line speaker-b">"Do what?"</p>
+      <p class="d-line speaker-a">"Remind me of the babe."</p>
+      <p class="d-attr">Labyrinth, 1986</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. STORY -->
+<section class="story" id="story">
+  <div class="section-inner">
+    <p class="section-label" style="color:var(--olivine);"><span class="label-rule"></span>How it all started</p>
+    <h2 class="section-headline" style="color:var(--porcelain);">A little story time.</h2>
+
+    <div class="story-spread">
+      <div class="story-left">
+        <div class="story-body">
+          <div class="story-drop-row">
+            <span class="story-drop">F</span>
+            <p>or those who want the whole story: it started on a Sunday in November 2023, when Joyce sent Ryan a message on Bumble about a video on his profile, an art installation he'd built for a skateboard pop-up at Art Basel. She thought he seemed cozy. Within a few exchanges, they were trading song recommendations, realizing how intertwined their taste in music was.</p>
+          </div>
+          <p>Three weeks later, they were wandering Balboa Park on a cool December night on their first date, chasing the international spirit garden and arriving just minutes too late. They ended up at a dive bar called Livewire instead.</p>
+          <div class="story-extra" id="storyExtra">
+            <p>The dates that followed only got better, each one more natural than the last. Italian food in Ocean Beach. A home-cooked dinner with the right music already on when he walked in. Then, at a record fair, Joyce put Ryan's diffing skills to work to fulfill her dream of finding Eddie Murphy's Party All the Time LP. Success!</p>
+            <p>Music was the thread running through all of it. Soul, funk, rare finds, the quest for the perfect record. Ryan's collection of a few thousand vinyls immediately dwarfed Joyce's growing but proud little stack. Ryan has been digging since he was a teenager. Joyce just has good taste, clearly. They fit.</p>
+            <p>Let's not forget a Miniature Bull Terrier named Kaj eventually weighed in too, firmly and loudly, in Ryan's favor.</p>
+            <p>They took their time, and the story keeps getting better.</p>
+          </div>
+          <button class="story-read-more" id="storyReadMore">Read more</button>
+        </div>
+      </div>
+
+      <div class="story-right">
+        <img src="https://www.figma.com/api/mcp/asset/818955fa-f803-4fd9-9166-5b15946272d0" alt="Joyce and Ryan" class="story-photo">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. CLOSER -->
+<section class="closer" id="closer" style="text-align: center;">
+  <div class="section-inner">
+    <p class="closer-quote">"It's only forever, not long at all."</p>
+    <p class="closer-attr">Labyrinth, 1986</p>
+  </div>
+</section>
+
+</main>
+
+<section class="rsvp" id="rsvp">
+  <div class="section-inner" style="text-align: center;">
+    <p class="section-label" style="justify-content: center;">RSVP</p>
+    <h2 class="rsvp-headline">Are you in?</h2>
+    <p class="rsvp-deck">Flora · San Diego<br>October 24, 2026</p>
+
+    <div class="rsvp-variants">
+      <a class="rsvp-link-c" href="https://withjoy.com/perfectlytayloredus" target="_blank" rel="noopener">
+        rsvp
+        <span class="rsvp-link-c-arrow">→</span>
+      </a>
+    </div>
+
+    <p style="margin-top: 3rem; font-family: var(--body); font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.3em; opacity: 0.7;">Deadline to RSVP · September 14, 2026</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec" id="faq">
+  <div class="section-inner">
+    <p class="section-label"><span class="label-rule"></span>FAQ</p>
+    <h2 class="section-headline">Everything you<br>need to know.</h2>
+
+    <div class="faq-list" id="faqList">
+
+      <div class="faq-col">
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>When do I need to RSVP by?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">September 14, 2026. After that, we hand the numbers to the caterer, and it gets complicated. We'd love to hear from you well before then.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Is there transportation from the Courtyard to Flora?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">No need! The Courtyard is 0.1 miles from Flora, less than a five-minute walk.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Where do I park?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">If you're staying at the Courtyard, you can walk. If you are at an Airbnb, we highly recommend taking a Lyft. The drinks will be flowing. If you insist on driving, you can find paid parking at a nearby parking structure or metered parking. Find more details <a href="../brand_assets/parking_map.pdf" target="_blank" rel="noopener" style="color:var(--olivine);text-decoration:underline;">here</a>.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Is the venue indoors or outdoors?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">Fully indoors. Flora is a stunning covered space with no weather to worry about. The after-party at our home will be inside and outside, depending on how the night goes.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Can I bring a plus one?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">If your invitation lists a name, please bring them. If it doesn't, please come solo. We've thought carefully about the guest list and want everyone to feel close.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="faq-show-more" id="faqShowMore">Show 5 more →</button>
+
+      <div class="faq-col">
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Are kids welcome?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">If they're on your invitation, yes! Otherwise, we kindly ask you to make arrangements.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>What about your registry?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">Your presence is a whole gift. If you'd like to do something more, our registry can be found <a href="https://withjoy.com/perfectlytayloredus/registry" target="_blank" rel="noopener" style="color:var(--olivine);text-decoration:underline;">here</a>.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Can we take photos?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">During cocktail hour and the reception, please do! The ceremony is phone-free. Our amazing photographer has it covered. We don't want cell phones or distractions during this short, important moment.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>How long will the ceremony be?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">Our ceremony will follow the cocktail hour while everyone is still standing and lounging, and should last ~10 minutes. Don't miss it!</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>What should I wear?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a">
+            <p class="faq-a-inner">In case you missed our <a href="#lookbook" style="color:var(--olivine);text-decoration:underline;">Lookbook</a>, try to follow our suggested color palette. We are hoping to reserve black and white for the bride and groom.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="foot">
+  <div class="foot-inner">
+    <p class="foot-wordmark">perfectly <em>taylored</em></p>
+    <div class="foot-meta">
+      <span>Joyce &amp; Ryan</span>
+      <span class="foot-dot"></span>
+      <span>October 24, 2026</span>
+      <span class="foot-dot"></span>
+      <span>Flora</span>
+      <span class="foot-dot"></span>
+      <span>San Diego, CA</span>
+    </div>
+  </div>
+</footer>
+
+<div class="proto-badge">Prototype v3</div>
+
+<script>
+/* ---- FAQ ACCORDION ---- */
+document.querySelectorAll('.faq-q').forEach(function(q) {
+  q.addEventListener('click', function() {
+    q.parentElement.classList.toggle('open');
+  });
+});
+
+/* ---- FAQ SHOW MORE (mobile) ---- */
+var faqShowMore = document.getElementById('faqShowMore');
+if (faqShowMore) {
+  faqShowMore.addEventListener('click', function() {
+    var secondCol = document.querySelector('.faq-col:last-of-type');
+    var faqList  = document.getElementById('faqList');
+    var expanded = secondCol.classList.toggle('expanded');
+    if (expanded) {
+      faqList.appendChild(faqShowMore);
+      faqShowMore.textContent = 'Show 5 less ←';
+    } else {
+      faqList.insertBefore(faqShowMore, secondCol);
+      faqShowMore.textContent = 'Show 5 more →';
+    }
+  });
+}
+
+/* ---- STORY READ MORE ---- */
+var storyReadMore = document.getElementById('storyReadMore');
+if (storyReadMore) {
+  storyReadMore.addEventListener('click', function() {
+    var extra = document.getElementById('storyExtra');
+    var open = extra.classList.toggle('open');
+    storyReadMore.textContent = open ? 'Read less' : 'Read more';
+  });
+}
+
+/* ---- DIALOGUE SCROLL ANIMATION ---- */
+(function() {
+  var dialogueSection = document.getElementById('dialogue');
+  if (!dialogueSection) return;
+
+  var dLineEls = Array.from(dialogueSection.querySelectorAll('.d-line'));
+  var total    = dLineEls.length;
+
+  var startAt      = 0.30;
+  var lineDur      = 0.25;
+  var lineInterval = (1 - startAt - lineDur) / (total - 1);
+
+  function reset() {
+    dLineEls.forEach(function(el) {
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+    });
+  }
+
+  function update() {
+    var rect = dialogueSection.getBoundingClientRect();
+    var vh   = window.innerHeight;
+
+    /* fully below viewport */
+    if (rect.top >= vh) { reset(); return; }
+
+    /* entry: section bottom entering → section top at viewport top */
+    if (rect.top >= 0) {
+      var entryProg = Math.max(0, Math.min(1, 1 - (rect.top / vh)));
+      dLineEls.forEach(function(el, i) {
+        var lp = Math.max(0, Math.min(1, (entryProg - startAt - i * lineInterval) / lineDur));
+        el.style.transition = 'none';
+        el.style.opacity = lp.toFixed(3);
+      });
+      return;
+    }
+
+    /* exit: section top past viewport top → lines fade out in reverse order */
+    var exitProg = Math.min(1, Math.abs(rect.top) / vh);
+    var exitInterval = (1 - lineDur) / (total - 1);
+
+    dLineEls.slice().reverse().forEach(function(el, ri) {
+      var lp = Math.max(0, Math.min(1, (exitProg - ri * exitInterval) / lineDur));
+      el.style.transition = 'none';
+      el.style.opacity = (1 - lp).toFixed(3);
+    });
+  }
+
+  reset();
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+/* ---- FIT HERO TEXT ---- */
+function fitHeroText() {
+  const name = document.getElementById('heroName');
+  const amp  = document.getElementById('heroAmp');
+  if (window.innerWidth <= 767) {
+    if (name) name.style.fontSize = '';
+    if (amp)  amp.style.fontSize  = '';
+    return;
+  }
+  const wrap = document.getElementById('heroWrap');
+  if (!name || !wrap) return;
+
+  const available = wrap.getBoundingClientRect().width;
+  const children  = Array.from(name.children);
+
+  /* Prevent flex shrink so overflow is measurable */
+  children.forEach(el => el.style.flexShrink = '0');
+
+  let lo = 14, hi = 500;
+  while (hi - lo > 0.5) {
+    const mid = (lo + hi) / 2;
+    name.style.fontSize = mid + 'px';
+    if (amp) amp.style.fontSize = mid + 'px';
+    name.scrollWidth <= available ? (lo = mid) : (hi = mid);
+  }
+
+  /* Restore */
+  children.forEach(el => el.style.flexShrink = '');
+
+  const size = Math.floor(lo);
+  name.style.fontSize = size + 'px';
+  if (amp) amp.style.fontSize = size + 'px';
+}
+
+document.fonts.ready.then(() => {
+  splitIntoLetters();
+  fitHeroText();
+  requestAnimationFrame(() => {
+    triggerLetterEntrance();
+    const meta = document.getElementById('heroMeta');
+    if (meta) meta.classList.add('visible');
+  });
+});
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(fitHeroText, 100);
+});
+
+/* ---- HERO NAME SCROLL FADE ---- */
+const heroEl   = document.getElementById('hero');
+const heroName = document.getElementById('heroName');
+let heroLetters = [];
+
+function splitIntoLetters() {
+  const segments = [
+    document.getElementById('wordInner1'),
+    document.getElementById('heroAmp'),
+    document.getElementById('wordInner2')
+  ];
+  heroLetters = [];
+  segments.forEach(el => {
+    const chars = [...el.textContent];
+    el.textContent = '';
+    chars.forEach(char => {
+      const s = document.createElement('span');
+      s.className = 'hero-letter';
+      s.style.opacity   = '0';
+      s.style.transform = 'translateY(-30px)';
+      s.textContent = char;
+      el.appendChild(s);
+      heroLetters.push(s);
+    });
+  });
+}
+
+function triggerLetterEntrance() {
+  heroLetters.slice().reverse().forEach((letter, i) => {
+    setTimeout(() => {
+      letter.style.transition = 'transform 1.4s var(--ease-out), opacity 1.1s ease';
+      letter.style.opacity    = '1';
+      letter.style.transform  = 'translateY(0)';
+    }, i * 110);
+  });
+}
+
+function updateHeroScroll() {
+  if (!heroEl || heroLetters.length === 0) return;
+  const progress = Math.min(1, window.scrollY / (heroEl.offsetHeight * 0.55));
+  heroLetters.forEach((letter, i) => {
+    letter.style.transition = 'none';
+    const stagger = (i / heroLetters.length) * 0.6;
+    const lp = Math.max(0, Math.min(1, (progress - stagger) / 0.4));
+    letter.style.opacity   = (1 - lp).toFixed(3);
+    letter.style.transform = `translateY(${(-lp * 100).toFixed(1)}px)`;
+  });
+}
+
+window.addEventListener('scroll', updateHeroScroll, { passive: true });
+
+/* ---- LOOKBOOK SCROLL ANIMATION ---- */
+(function() {
+  const lbSection  = document.getElementById('lookbook');
+  const lbHeadline = lbSection ? lbSection.querySelector('.section-headline') : null;
+  const lbSwatches = lbSection ? Array.from(lbSection.querySelectorAll('.lb-swatch')) : [];
+  let lbLetters = [];
+
+  function splitLbLetters() {
+    if (!lbHeadline) return;
+    const text = lbHeadline.textContent;
+    lbHeadline.textContent = '';
+    [...text].forEach(char => {
+      const s = document.createElement('span');
+      if (char === ' ') {
+        s.style.display = 'inline';
+        s.textContent = '\u00A0';
+      } else {
+        s.className = 'hero-letter';
+        s.style.opacity = '0';
+        s.style.transform = 'translateY(-30px)';
+        s.textContent = char;
+        lbLetters.push(s);
+      }
+      lbHeadline.appendChild(s);
+    });
+    lbSwatches.forEach(s => {
+      s.style.opacity = '0';
+      s.style.transform = 'translateY(-20px)';
+    });
+  }
+
+  function updateLbScroll() {
+    if (!lbSection) return;
+    const rect = lbSection.getBoundingClientRect();
+    const vh   = window.innerHeight;
+
+    if (rect.top > vh) {
+      lbLetters.forEach(l => { l.style.transition = 'none'; l.style.opacity = '0'; l.style.transform = 'translateY(-30px)'; });
+      lbSwatches.forEach(s => { s.style.transition = 'none'; s.style.opacity = '0'; s.style.transform = 'translateY(-20px)'; });
+      return;
+    }
+
+    if (rect.top >= 0) {
+      const entryProgress = Math.min(1, (vh - rect.top) / (vh * 0.75));
+      lbLetters.slice().reverse().forEach((letter, i) => {
+        letter.style.transition = 'none';
+        const stagger = (i / lbLetters.length) * 0.65;
+        const lp = Math.max(0, Math.min(1, (entryProgress - stagger) / 0.35));
+        letter.style.opacity   = lp.toFixed(3);
+        letter.style.transform = `translateY(${((1 - lp) * -30).toFixed(1)}px)`;
+      });
+      lbSwatches.forEach((swatch, i) => {
+        swatch.style.transition = 'none';
+        const stagger = 0.25 + ((lbSwatches.length - 1 - i) / lbSwatches.length) * 0.4;
+        const lp = Math.max(0, Math.min(1, (entryProgress - stagger) / 0.35));
+        swatch.style.opacity   = lp.toFixed(3);
+        swatch.style.transform = `translateY(${((1 - lp) * -20).toFixed(1)}px)`;
+      });
+      return;
+    }
+
+    const exitProgress = Math.min(1, Math.abs(rect.top) / (vh * 0.5));
+    lbLetters.forEach((letter, i) => {
+      letter.style.transition = 'none';
+      const stagger = (i / lbLetters.length) * 0.6;
+      const lp = Math.max(0, Math.min(1, (exitProgress - stagger) / 0.4));
+      letter.style.opacity   = (1 - lp).toFixed(3);
+      letter.style.transform = `translateY(${(-lp * 100).toFixed(1)}px)`;
+    });
+    lbSwatches.forEach((swatch, i) => {
+      swatch.style.transition = 'none';
+      const stagger = (i / lbSwatches.length) * 0.4;
+      const lp = Math.max(0, Math.min(1, (exitProgress - stagger) / 0.6));
+      swatch.style.opacity   = (1 - lp).toFixed(3);
+      swatch.style.transform = `translateY(${(-lp * 60).toFixed(1)}px)`;
+    });
+  }
+
+  if (lbSection) {
+    splitLbLetters();
+    window.addEventListener('scroll', updateLbScroll, { passive: true });
+    updateLbScroll();
+  }
+})();
+const mast = document.getElementById('mast');
+window.addEventListener('scroll', () => {
+  mast.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ---- MENU ---- */
+const menu = document.getElementById('menu');
+
+document.getElementById('menuOpen').addEventListener('click', () => {
+  menu.classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+
+function closeMenu() {
+  menu.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('menuClose').addEventListener('click', closeMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+document.querySelectorAll('.js-link').forEach(l => l.addEventListener('click', closeMenu));
+</script>
+
+<script async defer src="//assets.pinterest.com/js/pinit.js"></script>
+</body>
+</html>
