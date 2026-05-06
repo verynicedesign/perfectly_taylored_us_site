@@ -169,7 +169,7 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   justify-content: center;
   padding: 2rem 0;
-  max-width: 500px;
+  max-width: 550px;
   width: 100%;
   margin-inline: auto;
 }
@@ -215,7 +215,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .menu-foot {
-  max-width: 500px;
+  max-width: 550px;
   width: 100%;
   margin-inline: auto;
   padding: 1.25rem 0 2rem;
@@ -1269,20 +1269,40 @@ a { color: inherit; text-decoration: none; }
   position: fixed;
   inset: 0;
   z-index: 300;
-  background: var(--stone);
-  color: var(--pine);
   display: flex;
-  flex-direction: column;
-  animation: pt-rsvp-in 0.45s var(--ease-out);
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(9, 0, 1, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: pt-rsvp-in 0.35s var(--ease-out);
 }
 
 @keyframes pt-rsvp-in {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes pt-step-in {
   from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pt-rsvp-card {
+  background: var(--stone);
+  color: var(--pine);
+  width: 100%;
+  max-width: 440px;
+  max-height: 90svh;
+  display: flex;
+  flex-direction: column;
+  animation: pt-card-in 0.4s var(--ease-out);
+  overflow: hidden;
+}
+
+@keyframes pt-card-in {
+  from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -1844,7 +1864,34 @@ body.pt-rsvp-locked { overflow: hidden; }
   margin-bottom: 0.5rem;
 }
 
-/* VARIANT C — Gloock link with white arrow */
+/* RSVP section CTA button (porcelain on paprika) */
+.pt-rsvp-cta {
+  display: inline-flex;
+  width: auto;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 1.25rem 1.375rem;
+  background: var(--porcelain);
+  color: var(--pine);
+  border: none;
+  cursor: pointer;
+  font-family: var(--body);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+  -webkit-appearance: none;
+}
+
+.pt-rsvp-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.pt-rsvp-cta-arrow { font-size: 1.125rem; letter-spacing: 0; }
 .rsvp-link-c {
   display: inline-flex;
   align-items: center;
@@ -1855,10 +1902,14 @@ body.pt-rsvp-locked { overflow: hidden; }
   letter-spacing: -0.03em;
   color: var(--porcelain);
   text-decoration: none;
+  border: none;
   border-bottom: 1.5px solid rgba(255,255,251,0.35);
-  padding-bottom: 0.1em;
+  background: transparent;
+  padding: 0 0 0.1em;
+  cursor: pointer;
   transition: border-color 0.3s ease;
   line-height: 1;
+  -webkit-appearance: none;
 }
 
 .rsvp-link-c:hover { border-color: var(--porcelain); }
@@ -1975,7 +2026,6 @@ body.pt-rsvp-locked { overflow: hidden; }
   <a href="#"><img src="../brand_assets/lockup.png" alt="Perfectly Taylored" class="nav-lockup"></a>
   <nav class="mast-nav">
     <button class="mast-menu" id="menuOpen">Menu</button>
-    <button type="button" class="mast-rsvp" data-rsvp-open>RSVP</button>
   </nav>
 </header>
 
@@ -2383,13 +2433,12 @@ body.pt-rsvp-locked { overflow: hidden; }
     <p class="rsvp-deck">Flora · San Diego<br>October 24, 2026</p>
 
     <div class="rsvp-variants">
-      <button type="button" class="rsvp-link-c" data-rsvp-open>
-        rsvp
-        <span class="rsvp-link-c-arrow">→</span>
+      <button type="button" class="pt-rsvp-cta" data-rsvp-open>
+        <span>RSVP by September 14</span>
+        <span class="pt-rsvp-cta-arrow">→</span>
       </button>
     </div>
 
-    <p style="margin-top: 3rem; font-family: var(--body); font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.3em; opacity: 0.7;">Deadline to RSVP · September 14, 2026</p>
   </div>
 </section>
 
@@ -2519,7 +2568,7 @@ body.pt-rsvp-locked { overflow: hidden; }
 <!-- FOOTER -->
 <footer class="foot">
   <div class="foot-inner">
-    <p class="foot-wordmark">perfectly <em>taylored</em></p>
+    <p class="foot-wordmark">perfectly<em>taylored</em></p>
     <div class="foot-meta">
       <span>Joyce &amp; Ryan</span>
       <span class="foot-dot"></span>
@@ -2533,6 +2582,21 @@ body.pt-rsvp-locked { overflow: hidden; }
 </footer>
 
 <div class="proto-badge">Prototype v3</div>
+
+<!-- RSVP MODAL -->
+<div class="pt-rsvp-modal" id="ptRsvpModal" hidden>
+  <div class="pt-rsvp-card">
+    <div class="pt-rsvp-modal__topbar">
+      <span class="pt-rsvp-modal__counter" id="ptRsvpCounter">RSVP / 01 · 05</span>
+      <button type="button" class="pt-rsvp-modal__close" id="ptRsvpClose">Close ✕</button>
+    </div>
+    <div class="pt-rsvp-modal__progress" id="ptRsvpProgress">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="pt-rsvp-modal__body" id="ptRsvpBody"></div>
+    <div class="pt-rsvp-modal__footer" id="ptRsvpFooter"></div>
+  </div>
+</div>
 
 <script>
 /* ---- FAQ ACCORDION ---- */
@@ -2919,10 +2983,12 @@ window.addEventListener('scroll', () => {
         '</div>' +
       '</div>';
     } else if (step === 4) {
+      var noteHeading = data.attending === 'no' ? 'A note to<br><em>the couple</em>' : 'Anything you want<br><em>us to know?</em>';
+      var noteSub = data.attending === 'no' ? 'Optional, but appreciated.' : 'A note. A song. A travel concern. Whatever\'s on your mind. Optional.';
       html = '<div class="pt-rsvp-step">' +
-        '<span class="pt-rsvp-step__label">Question 04 of 05</span>' +
-        '<h2 class="pt-rsvp-step__heading">Anything you want<br><em>us to know?</em></h2>' +
-        '<p class="pt-rsvp-step__sub">A note. A song. A travel concern. Whatever\'s on your mind. Optional.</p>' +
+        '<span class="pt-rsvp-step__label">Question ' + (data.attending === 'no' ? '03' : '04') + ' of ' + (data.attending === 'no' ? '03' : '04') + '</span>' +
+        '<h2 class="pt-rsvp-step__heading">' + noteHeading + '</h2>' +
+        '<p class="pt-rsvp-step__sub">' + noteSub + '</p>' +
         '<div style="margin-top:1.25rem;">' +
           '<textarea class="pt-rsvp-textarea" id="ptRsvpNote" rows="5" placeholder="Optional">' + escapeHtml(data.note) + '</textarea>' +
         '</div>' +
@@ -3033,11 +3099,18 @@ window.addEventListener('scroll', () => {
   function advance() {
     if (!canAdvance()) return;
     if (step === 4) { onSubmit(data); step = 5; }
+    else if (step === 2 && data.attending === 'no') { step = 4; } /* skip dietary if not attending */
     else { step += 1; }
     renderStep();
   }
 
-  function back() { if (step > 0 && step < 5) { step -= 1; renderStep(); } }
+  function back() {
+    if (step > 0 && step < 5) {
+      if (step === 4 && data.attending === 'no') { step = 2; } /* skip dietary going back */
+      else { step -= 1; }
+      renderStep();
+    }
+  }
 
   function openModal() {
     step = 0;
@@ -3066,24 +3139,14 @@ window.addEventListener('scroll', () => {
   });
 
   closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && !modal.hidden) closeModal();
   });
 })();
 </script>
-
-<!-- RSVP MODAL -->
-<div class="pt-rsvp-modal" id="ptRsvpModal" hidden>
-  <div class="pt-rsvp-modal__topbar">
-    <span class="pt-rsvp-modal__counter" id="ptRsvpCounter">RSVP / 01 · 05</span>
-    <button type="button" class="pt-rsvp-modal__close" id="ptRsvpClose">Close ✕</button>
-  </div>
-  <div class="pt-rsvp-modal__progress" id="ptRsvpProgress">
-    <span></span><span></span><span></span><span></span><span></span>
-  </div>
-  <div class="pt-rsvp-modal__body" id="ptRsvpBody"></div>
-  <div class="pt-rsvp-modal__footer" id="ptRsvpFooter"></div>
-</div>
 
 <script async defer src="//assets.pinterest.com/js/pinit.js"></script>
 </body>
