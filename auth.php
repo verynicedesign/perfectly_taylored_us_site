@@ -1,24 +1,27 @@
 <?php
 session_start();
 
+header('Content-Type: application/json');
+
 /* Only accept POST */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: index.php');
+    echo json_encode(['ok' => false, 'error' => 'invalid_method']);
     exit;
 }
 
 /* Read inputs */
 $first    = trim($_POST['first_name'] ?? '');
 $last     = trim($_POST['last_name']  ?? '');
-$password = trim($_POST['password']   ?? '');
+$password = trim(strtolower($_POST['password'] ?? ''));
+$password = preg_replace('/\s+/', ' ', $password);
 
 /* Require all three fields */
 if ($first === '' || $last === '' || $password === '') {
-    header('Location: index.php?err=1');
+    echo json_encode(['ok' => false, 'error' => 'missing_fields']);
     exit;
 }
 
-/* Normalize the submitted full name for comparison */
+/* Normalize name for comparison */
 function normalize_name(string $s): string {
     return strtolower(preg_replace('/\s+/', ' ', trim($s)));
 }
@@ -28,23 +31,22 @@ $submitted_full = normalize_name($first . ' ' . $last);
 /* Load guest list */
 $json_path = __DIR__ . '/data/guests.json';
 if (!file_exists($json_path)) {
-    header('Location: index.php?err=1');
+    echo json_encode(['ok' => false, 'error' => 'no_guest_list']);
     exit;
 }
 
 $guests_data = json_decode(file_get_contents($json_path), true);
 if (!$guests_data || !isset($guests_data['parties'])) {
-    header('Location: index.php?err=1');
+    echo json_encode(['ok' => false, 'error' => 'invalid_guest_list']);
     exit;
 }
 
-/* Find matching party:
-   1. Password must match exactly (not lowercased)
-   2. Submitted name must match a member in that party */
+/* Find matching party */
 $matched_party = null;
 
 foreach ($guests_data['parties'] as $party) {
-    if (($party['password'] ?? '') !== $password) {
+    $party_pass = strtolower(preg_replace('/\s+/', ' ', trim($party['password'] ?? '')));
+    if ($party_pass !== $password) {
         continue;
     }
     foreach ($party['members'] as $member) {
@@ -57,16 +59,16 @@ foreach ($guests_data['parties'] as $party) {
 }
 
 if ($matched_party === null) {
-    header('Location: index.php?err=1');
+    echo json_encode(['ok' => false, 'error' => 'no_match']);
     exit;
 }
 
-/* Auth success */
-$_SESSION['pt_authed']    = true;
-$_SESSION['pt_first']     = $first;
-$_SESSION['pt_last']      = $last;
-$_SESSION['pt_party_id']  = $matched_party['id'];
+/* Auth success — set session */
+$_SESSION['pt_authed']   = true;
+$_SESSION['pt_first']    = $first;
+$_SESSION['pt_last']     = $last;
+$_SESSION['pt_party_id'] = $matched_party['id'] ?? '';
 
 session_regenerate_id(true);
-header('Location: home.php');
-exit;
+
+echo json_encode(['ok' => true, 'first' => $first, 'last' => $last]);

@@ -4,7 +4,6 @@
    Keeps localStorage for the welcome-screen animation only (not real auth).
    ========================================================================= */
 (function () {
-  var STORAGE_KEY       = 'pt-gate-welcome'; /* UI only — real auth is PHP session */
   var HELP_FORM_ENDPOINT = 'https://api.web3forms.com/submit';
   var HELP_FORM_KEY      = '77293868-441e-4869-aac0-eebdec7f398d';
 
@@ -37,16 +36,7 @@
 
   if (!gate) return;
 
-  /* ---- Welcome animation (UI only) ---- */
-  function readWelcome() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      var v = JSON.parse(raw);
-      if (!v || !v.exp || v.exp < Date.now()) return null;
-      return v;
-    } catch (e) { return null; }
-  }
+  /* ---- Welcome animation ---- */
 
   function unlock() {
     gate.classList.add('is-leaving');
@@ -60,13 +50,8 @@
     setTimeout(unlock, 2200);
   }
 
-  /* If returning visitor (PHP session already valid, stored name exists) */
-  var stored = readWelcome();
-  if (stored && stored.first) {
-    showWelcome(stored.first);
-  } else {
-    setTimeout(function () { gateFirst && gateFirst.focus({ preventScroll: true }); }, 600);
-  }
+  /* ---- Focus first field on load ---- */
+  setTimeout(function () { gateFirst && gateFirst.focus({ preventScroll: true }); }, 600);
 
   /* ---- Form submit — posts to auth.php via fetch ---- */
   gateForm.addEventListener('submit', function (e) {
@@ -97,22 +82,13 @@
     fetch('auth.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString(),
-      redirect: 'manual'
+      body: body.toString()
     })
-    .then(function (res) {
-      /* auth.php returns 302 to home.php on success, 302 to index.php?err=1 on fail */
-      var dest = res.headers.get('location') || res.url;
-      if (res.type === 'opaqueredirect' || (dest && dest.indexOf('home.php') !== -1)) {
-        /* Success — store name for welcome animation, then navigate */
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            first: f, exp: Date.now() + 3600 * 1000 /* 1 hour, just for the animation */
-          }));
-        } catch (e) {}
-        showWelcome(f);
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.ok) {
+        showWelcome(data.first || f);
       } else {
-        /* Failed */
         gate.classList.remove('is-submitting');
         gateSubmit.disabled = false;
         gateSubmit.textContent = 'Enter \u2192';
