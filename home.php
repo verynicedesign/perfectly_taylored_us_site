@@ -6,7 +6,7 @@ if (empty($_SESSION['pt_authed'])) {
     exit;
 }
 
-$guest = isset($_SESSION['pt_guest']) ? $_SESSION['pt_guest'] : '';
+$first = htmlspecialchars($_SESSION['pt_first'] ?? 'friend');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,11 +16,19 @@ $guest = isset($_SESSION['pt_guest']) ? $_SESSION['pt_guest'] : '';
 <title>Perfectly Taylored</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/tokens.css">
+<style>
+  body { background: var(--pine); color: var(--porcelain); min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+  h1 { font-family: var(--display); font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 400; letter-spacing: -0.025em; }
+  p { font-size: 0.9375rem; font-weight: 300; opacity: 0.6; }
+  a { font-family: var(--body); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olivine); text-decoration: none; opacity: 0.8; }
+  a:hover { opacity: 1; }
+</style>
 </head>
 <body>
-<p>Authenticated as <?php echo htmlspecialchars($guest, ENT_QUOTES, 'UTF-8'); ?>. Wedding content goes here.</p>
-<p><a href="logout.php">Log out</a></p>
+  <h1>You're in, <?= $first ?>.</h1>
+  <p>The wedding website is coming. Check back soon.</p>
+  <a href="logout.php">Log out</a>
 </body>
 </html>

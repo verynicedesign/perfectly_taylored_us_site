@@ -1,60 +1,72 @@
 <?php
 session_start();
 
+/* Only accept POST */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: index.php');
     exit;
 }
 
-function pt_normalize($s) {
-    $s = trim((string)$s);
-    $s = function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
-    $s = preg_replace('/\s+/u', ' ', $s);
-    return $s;
-}
+/* Read inputs */
+$first    = trim($_POST['first_name'] ?? '');
+$last     = trim($_POST['last_name']  ?? '');
+$password = trim($_POST['password']   ?? '');
 
-$first = isset($_POST['first_name']) ? $_POST['first_name'] : '';
-$last  = isset($_POST['last_name'])  ? $_POST['last_name']  : '';
-$pass  = isset($_POST['password'])   ? $_POST['password']   : '';
-
-$first_norm = pt_normalize($first);
-$last_norm  = pt_normalize($last);
-$fullname   = pt_normalize($first_norm . ' ' . $last_norm);
-
-$dataPath = __DIR__ . '/data/guests.json';
-$raw = @file_get_contents($dataPath);
-if ($raw === false) {
+/* Require all three fields */
+if ($first === '' || $last === '' || $password === '') {
     header('Location: index.php?err=1');
     exit;
 }
 
-$data = json_decode($raw, true);
-if (!is_array($data) || !isset($data['password']) || !isset($data['guests']) || !is_array($data['guests'])) {
+/* Normalize the submitted full name for comparison */
+function normalize_name(string $s): string {
+    return strtolower(preg_replace('/\s+/', ' ', trim($s)));
+}
+
+$submitted_full = normalize_name($first . ' ' . $last);
+
+/* Load guest list */
+$json_path = __DIR__ . '/data/guests.json';
+if (!file_exists($json_path)) {
     header('Location: index.php?err=1');
     exit;
 }
 
-if (!hash_equals((string)$data['password'], (string)$pass)) {
+$guests_data = json_decode(file_get_contents($json_path), true);
+if (!$guests_data || !isset($guests_data['parties'])) {
     header('Location: index.php?err=1');
     exit;
 }
 
-$matchedOriginal = null;
-foreach ($data['guests'] as $guest) {
-    if (pt_normalize($guest) === $fullname) {
-        $matchedOriginal = $guest;
-        break;
+/* Find matching party:
+   1. Password must match exactly (not lowercased)
+   2. Submitted name must match a member in that party */
+$matched_party = null;
+
+foreach ($guests_data['parties'] as $party) {
+    if (($party['password'] ?? '') !== $password) {
+        continue;
+    }
+    foreach ($party['members'] as $member) {
+        $member_full = normalize_name($member['first'] . ' ' . $member['last']);
+        if ($member_full === $submitted_full) {
+            $matched_party = $party;
+            break 2;
+        }
     }
 }
 
-if ($matchedOriginal === null) {
+if ($matched_party === null) {
     header('Location: index.php?err=1');
     exit;
 }
 
-session_regenerate_id(true);
-$_SESSION['pt_authed'] = true;
-$_SESSION['pt_guest']  = $matchedOriginal;
+/* Auth success */
+$_SESSION['pt_authed']    = true;
+$_SESSION['pt_first']     = $first;
+$_SESSION['pt_last']      = $last;
+$_SESSION['pt_party_id']  = $matched_party['id'];
 
+session_regenerate_id(true);
 header('Location: home.php');
 exit;
